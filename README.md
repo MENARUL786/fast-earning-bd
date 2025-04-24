@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fast Earning BD</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; background: #f1f1f1; }
+    .menu { background: #1a237e; padding: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+    .menu button { background: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; color: #1a237e; }
+    .menu button:hover { background: #c5cae9; }
+    .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 10px; margin-top: 15px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: none; }
+    .form-input, textarea { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
+    .button { padding: 10px 15px; background: #4caf50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .money-display { font-size: 18px; font-weight: bold; color: #1a237e; margin-top: 10px; }
+    #time { font-size: 18px; text-align: center; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<div class="menu" id="menu">
+  <button onclick="showSection('home')">হোম</button>
+  <button onclick="showSection('register')" class="guest">রেজিস্ট্রেশন</button>
+  <button onclick="showSection('login')" class="guest">লগইন</button>
+  <button class="auth" onclick="showSection('refer')">রেফার</button>
+  <button class="auth" onclick="showSection('rules')">নিয়ম</button>
+  <button class="auth" onclick="showSection('deposit')">ডিপোজিট</button>
+  <button class="auth" onclick="showSection('withdraw')">উত্তোলন</button>
+  <button class="auth" onclick="showSection('mining')">মাইনিং</button>
+  <button class="auth" onclick="showSection('balance')">ব্যালেন্স</button>
+  <button class="auth" onclick="showSection('support')">সাপোর্ট</button>
+  <button class="auth" onclick="logout()">লগআউট</button>
+</div>
+
+<div id="time"></div>
+
+<div class="container" id="home">
+  <h2 style="text-align: center;">স্বাগতম</h2>
+  <p style="text-align: center;">রেফার করে আয় করুন! প্রতি রেফারে ৫ টাকা।</p>
+  <h3>নিয়মাবলি:</h3>
+  <ul>
+    <li>১ রেফার = ৫ টাকা</li>
+    <li>১২ জন রেফার করলে উত্তোলন সম্ভব (যদি ইউজার ডিপোজিট করে)</li>
+    <li>১ লাখ কয়েন = ১ টাকা</li>
+    <li>১০০ টাকা = ১ স্পিড</li>
+    <li>১ স্পিড = ৬০ টাকা/মাস</li>
+  </ul>
+</div>
+
+<div class="container" id="register">
+  <h2>রেজিস্ট্রেশন</h2>
+  <input type="text" id="regName" class="form-input" placeholder="আপনার নাম">
+  <input type="email" id="regEmail" class="form-input" placeholder="ইমেইল">
+  <input type="password" id="regPass" class="form-input" placeholder="পাসওয়ার্ড">
+  <button class="button" onclick="register()">রেজিস্টার</button>
+</div>
+
+<div class="container" id="login">
+  <h2>লগইন</h2>
+  <input type="email" id="loginEmail" class="form-input" placeholder="ইমেইল">
+  <input type="password" id="loginPass" class="form-input" placeholder="পাসওয়ার্ড">
+  <button class="button" onclick="login()">লগইন</button>
+  <p><a href="#" onclick="forgotPassword()">পাসওয়ার্ড ভুলে গেছেন?</a></p>
+</div>
+
+<div class="container auth" id="refer">
+  <h2>রেফার করুন</h2>
+  <input type="text" class="form-input" value="" id="refLink" readonly>
+  <button class="button" onclick="copyRef()">রেফার লিংক কপি করুন</button>
+</div>
+
+<div class="container auth" id="rules">
+  <h2>আয়ের নিয়ম</h2>
+  <ul>
+    <li>১ রেফার = ৫ টাকা</li>
+    <li>১২ জন রেফার করলে উত্তোলন সম্ভব (যদি ইউজার ডিপোজিট করে)</li>
+    <li>১ লাখ কয়েন = ১ টাকা</li>
+    <li>১০০ টাকা = ১ স্পিড</li>
+    <li>১ স্পিড = ৬০ টাকা/মাস</li>
+  </ul>
+</div>
+
+<div class="container auth" id="deposit">
+  <h2>ডিপোজিট করুন</h2>
+  <input type="number" class="form-input" id="depositAmount" placeholder="টাকার পরিমাণ (সর্বনিম্ন ১০০)">
+  <button class="button" onclick="makeDeposit()">ডিপোজিট</button>
+</div>
+
+<div class="container auth" id="withdraw">
+  <h2>উত্তোলন</h2>
+  <p>সর্বনিম্ন ৬০ টাকা উত্তোলন করতে হবে। ফি: ৮.৪%</p>
+  <button class="button" onclick="withdrawMoney()">উত্তোলন করুন</button>
+</div>
+
+<div class="container auth" id="mining">
+  <h2>আপনার মাইনিং</h2>
+  <div class="money-display">বর্তমান স্পিড: <span id="currentSpeed">১</span></div>
+  <div class="money-display">মোট আয়: <span id="totalTk">০</span> টাকা</div>
+  <div class="money-display">কয়েন: <span id="coins">০</span></div>
+  <button class="button" onclick="increaseSpeed()">স্পিড বাড়ান</button>
+</div>
+
+<div class="container auth" id="balance">
+  <h2>আপনার ব্যালেন্স</h2>
+  <div class="money-display">মূল ব্যালেন্স: <span id="mainBalance">৫০০</span> টাকা</div>
+  <div class="money-display">উত্তোলনযোগ্য আয়: <span id="excitedBalance">০</span> টাকা</div>
+  <div class="money-display">মোট রেফার: <span id="referCount">০</span></div>
+  <div class="money-display">রেফার ব্যালেন্স: <span id="referBalance">০</span> টাকা</div>
+</div>
+
+<div class="container auth" id="support">
+  <h2>সাপোর্ট</h2>
+  <textarea placeholder="আপনার মন্তব্য লিখুন..."></textarea>
+  <button class="button">সাবমিট</button>
+</div>
+
+<script>
+let loggedIn = false;
+let speed = 1, coins = 0, totalTk = 0, balance = 500;
+let excitedBalance = 0, referCount = 0, referBalance = 0;
+let depositUsers = 0, withdrawUsers = 0, totalDeposit = 0, totalWithdraw = 0, activeUsers = 0;
+
+function updateTime() {
+  const now = new Date();
+  document.getElementById('time').textContent = "বর্তমান সময়: " + now.toLocaleTimeString();
+}
+setInterval(updateTime, 1000);
+
+function showSection(id) {
+  const section = document.getElementById(id);
+  if (!loggedIn && section.classList.contains('auth')) {
+    alert("অনুগ্রহ করে আগে লগইন করুন।");
+    return;
+  }
+  document.querySelectorAll('.container').forEach(sec => sec.style.display = 'none');
+  section.style.display = 'block';
+}
+
+function copyRef() {
+  const ref = document.getElementById('refLink');
+  ref.select(); ref.setSelectionRange(0, 99999);
+  document.execCommand('copy');
+  alert("রেফার লিংক কপি হয়েছে!");
+}
+
+function updateBalanceDisplay() {
+  document.getElementById('mainBalance').textContent = balance;
+  document.getElementById('coins').textContent = coins;
+  document.getElementById('totalTk').textContent = totalTk.toFixed(2);
+  document.getElementById('currentSpeed').textContent = speed;
+  document.getElementById('excitedBalance').textContent = excitedBalance.toFixed(2);
+  document.getElementById('referCount').textContent = referCount;
+  document.getElementById('referBalance').textContent = referBalance;
+}
+
+function increaseSpeed() {
+  if (balance >= 100) {
+    speed++; balance -= 100;
+    updateBalanceDisplay();
+  } else {
+    alert("স্পিড বাড়াতে ১০০ টাকা লাগবে।");
+  }
+}
+
+function makeDeposit() {
+  const amount = parseInt(document.getElementById('depositAmount').value);
+  if (amount >= 100) {
+    balance += amount;
+    totalDeposit += amount;
+    depositUsers++;
+    updateBalanceDisplay();
+  } else {
+    alert("সর্বনিম্ন ১০০ টাকা ডিপোজিট করতে হবে।");
+  }
+}
+
+function withdrawMoney() {
+  if (excitedBalance >= 60) {
+    let fee = excitedBalance * 0.084;
+    let amount = excitedBalance - fee;
+    excitedBalance = 0;
+    totalWithdraw += amount;
+    withdrawUsers++;
+    alert(`আপনি ${amount.toFixed(2)} টাকা উত্তোলন করেছেন।`);
+    updateBalanceDisplay();
+  } else {
+    alert("সর্বনিম্ন ৬০ টাকা উত্তোলন করতে হবে।");
+  }
+}
+
+function startMining() {
+  setInterval(() => {
+    coins += speed * 5;
+    totalTk = coins / 100000;
+    excitedBalance = totalTk;
+    updateBalanceDisplay();
+  }, 1000);
+}
+
+function register() {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const pass = document.getElementById('regPass').value;
+  if (!name || !email || !pass) return alert("সব ঘর পূরণ করুন");
+
+  localStorage.setItem('user', JSON.stringify({ name, email, pass }));
+  alert("রেজিস্ট্রেশন সফল! লগইন করুন।");
+  showSection('login');
+}
+
+function login() {
+  const email = document.getElementById('loginEmail').value;
+  const pass = document.getElementById('loginPass').value;
+  const user = JSON.parse(localStorage.getItem('user'));
+
+  if (user && user.email === email && user.pass === pass) {
+    loggedIn = true;
+    activeUsers++;
+    document.querySelectorAll('.auth').forEach(btn => btn.style.display = 'inline-block');
+    document.querySelectorAll('.guest').forEach(btn => btn.style.display = 'none');
+    document.getElementById('refLink').value = `${window.location.origin}?ref=${email}`;
+    const refCode = new URLSearchParams(window.location.search).get('ref');
+    if (refCode && refCode !== email) {
+      referCount++;
+      referBalance += 5;
+    }
+    alert("লগইন সফল!");
+    showSection('home');
+    updateBalanceDisplay();
+  } else {
+    alert("ইমেইল বা পাসওয়ার্ড ভুল!");
+  }
+}
+
+function logout() {
+  loggedIn = false;
+  document.querySelectorAll('.auth').forEach(btn => btn.style.display = 'none');
+  document.querySelectorAll('.guest').forEach(btn => btn.style.display = 'inline-block');
+  alert("লগআউট সফল!");
+  showSection('home');
+}
+
+function forgotPassword() {
+  const email = prompt("আপনার ইমেইল দিন:");
+  const user = JSON.parse(localStorage.getItem('user'));
+  if (user && user.email === email) {
+    alert("আপনার পাসওয়ার্ড: " + user.pass);
+  } else {
+    alert("এই ইমেইল দিয়ে কোনো একাউন্ট পাওয়া যায়নি!");
+  }
+}
+
+window.onload = () => {
+  document.querySelectorAll('.auth').forEach(btn => btn.style.display = 'none');
+  document.querySelectorAll('.guest').forEach(btn => btn.style.display = 'inline-block');
+  showSection('home');
+  updateBalanceDisplay();
+  startMining();
+};
+</script>
+
+</body>
+</html>
